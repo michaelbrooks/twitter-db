@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Stream Status{% endblock %}
+{% block header %}Stream Status{% endblock %}
+
+{% block content %}
+    <p class="lead">
+        {% if tweet_count > 0 %}Hooray!{% else %}Sad :({% endif %}
+        Your database contains {{ tweet_count }} tweets.
+    </p>
+
+    <p>The Twitter stream is
+        <span class="label {% if running %}label-success{% else %}label-warning{% endif %}">
+            {% if running %}Running{% else %}Stopped{% endif %}
+        </span>
+        {% if not tweet_count %}
+            &nbsp; Run this command to start streaming: <code>./manage.py stream</code>
+        {% endif %}
+    </p>
+
+    <p>Enabled filter terms:
+        {% if filter_terms %}
+            {% for term in filter_terms %}
+                <code>{{ term }}</code>
+            {% endfor %}
+            <a href="{% url 'admin:twitter_stream_filterterm_changelist' %}">Change</a>
+        {% else %}
+            <a href="{% url 'admin:twitter_stream_filterterm_add' %}">Add some terms</a>
+        {% endif %}
+    </p>
+
+    <p>Configured Twitter API credentials:
+        {% if credentials %}
+            {% for cred in credentials %}
+                <code>{{ cred.name }}</code>
+            {% endfor %}
+        {% else %}
+            <a href="{% url 'admin:twitter_stream_twitterapicredentials_add' %}">Add your credentials</a>
+        {% endif %}
+    </p>
+
+    {% if processes %}
+        <p>Recent Twitter streaming processes:</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Status</th>
+                <th>Process</th>
+                <th>API Credentials</th>
+                <th>Started</th>
+                <th>Last Heartbeat</th>
+                <th>Tweet Rate (t/s)</th>
+                <th>Errors</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for stream in processes %}
+                <tr class="
+            {% if stream.status != stream.STREAM_STATUS_RUNNING %}text-muted{% endif %}
+            {% if stream.error_count > 0 %}text-danger{% endif %}
+            ">
+                    <td>
+                <span class="label {% if stream.status != stream.STREAM_STATUS_RUNNING %}label-default{% else %}label-success{% endif %}">
+                    {{ stream.get_status_display }}
+                </span>
+                    </td>
+                    <td>{{ stream.hostname }}:{{ stream.process_id }}</td>
+                    <td>{{ stream.credentials }}</td>
+                    <td>{{ stream.created_at|naturaltime }}</td>
+                    <td>{{ stream.last_heartbeat|naturaltime }}</td>
+                    <td>{{ stream.tweet_rate|floatformat }}</td>
+                    {% if stream.error_count > 0 %}
+                        <td><b>{{ stream.error_count }}</b></td>
+                    {% else %}
+                        <td>{{ stream.error_count }}</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No recent Twitter streaming processes.</p>
+    {% endif %}
+{% endblock %}

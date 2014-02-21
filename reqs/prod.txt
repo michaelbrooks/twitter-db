@@ -1,0 +1,5 @@
+# requirements/prod.txt
+
+-r common.txt
+
+mysql-python==1.2.5

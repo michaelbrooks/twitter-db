@@ -1,0 +1,3 @@
+# requirements.txt
+
+-r reqs/prod.txt
