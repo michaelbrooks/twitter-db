@@ -37,8 +37,8 @@ Now that we have the prerequisites, you need to obtain a copy of the code.
 Clone the repository to your machine:
 
 ```bash
-$ git clone https://github.com/michaelbrooks/twitter-feels.git
-$ cd twitter-feels
+$ git clone https://github.com/michaelbrooks/twitter-db.git
+$ cd twitter-db
 ```
 
 
@@ -131,7 +131,6 @@ in the Django Admin site. Provide your name and email, as well as the API key/se
 
 You also need to provide at least one filter term to use for streaming tweets.
 Add a new [Filter Term](http://localhost:8000/admin/streamer/filterterm/add) in the Django Admin site.
-For example, you may want to add `i feel` or some other term.
 
 Next, to start streaming, you can run this command in a separate terminal
 (don't forget to activate your Python virtual environment first):
